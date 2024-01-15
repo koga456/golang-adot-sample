@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package test;
+
+option go_package = "pkg/";
+
+service Service {
+  rpc Get(GetRequest) returns (GetResponse) {}
+}
+
+message GetRequest {
+  string input = 1;
+}
+
+message GetResponse {
+  string output =1;
+}

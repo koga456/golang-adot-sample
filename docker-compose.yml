@@ -5,8 +5,6 @@ services:
     command: --config otel-local-config.yaml
     ports:
       - "4317:4317"
-      - "55680:55680"
-      - "8889:8888"
     environment:
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
@@ -14,3 +12,19 @@ services:
       - AWS_REGION=ap-northeast-1
     volumes:
       - ./adot-config.yaml:/otel-local-config.yaml
+  backend:
+    image: adot-sample-backend
+    container_name: adot-sample-backend
+    build:
+      context: ./backend
+      dockerfile: ./build/Dockerfile
+    ports:
+      - "9090:9090"
+    healthcheck:
+      test: [ "CMD", "/bin/grpc_health_probe", "-addr=:9090" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    depends_on:
+      - adot-collector
